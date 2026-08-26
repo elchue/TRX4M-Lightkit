@@ -1,50 +1,59 @@
-# TRX-4M Pro Scale Lichtsystem - Reverse Engineering
+## 🚙 Traxxas TRX-4M Custom Light Controller
+![AI Assisted](https://img.shields.io/badge/AI--Assisted-Gemini-blue?style=flat-for-the-badge&logo=googlegemini&logoColor=white) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-Dieses Repository enthält die Hardware-Zuordnung und Logik, um das proprietäre Traxxas TRX-4M Pro Scale Lichtsystem (Light Kit) sowie das originale Zubehör (Anhänger-Beleuchtung, Lightbars) mit eigenen Mikrocontrollern (z. B. ESP32, Arduino, SAMD21) und Standard-RC-Empfängern (wie Flysky iBUS) zu steuern.
+Ein maßgeschneidertes, intelligentes Steuergerät (basierend auf dem **ESP32-C6**), um das **originale Traxxas TRX-4M Pro Scale Lichtkit (inkl. Lightbar)** mit 3rd-Party Fernsteuerungen (wie Flysky Noble NB4, Radiomaster, Futaba etc.) und Aftermarket-ESCs weiterverwenden zu können!
 
-## Hardware-Aufbau und das Y-Kabel-Prinzip
+Wer seinen TRX-4M auf Brushless (z. B. Furitek) oder eine professionelle Funke umbaut, verliert normalerweise die Funktion des originalen Traxxas-Lichtsets, da dieses fest an die Traxxas ECM-2.5 Einheit gebunden ist. Dieses Projekt ersetzt die Traxxas-Elektronik als "Gehirn" für die Lichter und wertet das System mit smarten Features, Web-Konfiguration und Telemetrie-ähnlicher Auswertung extrem auf.
 
-Das Traxxas Lichtkabel basiert technisch auf dem **WS2811/WS2812 (NeoPixel)** Protokoll. Anstatt jedoch echte RGB-LEDs zu verbauen, die ihre Farbe wechseln können, nutzt Traxxas unsichtbare Controller-Chips auf den Platinen, die das Signal empfangen. An die drei Farbausgänge (Rot, Grün, Blau) eines einzelnen Chips hat Traxxas hardwareseitig **drei verschiedene, einfarbige LEDs** gelötet. Ein Befehl für "100% Rot" schaltet also keine rote Farbe ein, sondern aktiviert einen spezifischen Funktionsausgang (z. B. den Blinker).
+## ✨ Warum dieses Projekt?
+Das originale TRX-4M Lichtkit nutzt adressierbare LEDs (ähnlich dem WS2812-Protokoll), die über eine serielle Datenleitung angesteuert werden. Wie genau wir die proprietären Signale entschlüsselt haben, kannst du in unserer detaillierten [Hardware & Protokoll Dokumentation (Reverse Engineering)](/docs/README.md) nachlesen.
 
-### Besonderheit: Die Verkabelung am ECM-2.5
-Am originalen Traxxas **ECM-2.5** (Empfänger/ESC-Einheit) wird das Datensignal teilweise über physische Y-Kabel aufgeteilt:
-1. **Haupt-Lichtkit:** Steuert die vier Ecken des Fahrzeugs.
-2. **Zusatzscheinwerfer:** (Lightbar + Kühlergrill) Hängen an einem Y-Kabel und lesen denselben Datenstrom wie das vordere linke Abblendlicht mit.
-3. **Anhänger:** Hängt ebenfalls an einem Y-Kabel. Die Chips im Anhänger sind so konfiguriert, dass sie synchron auf die Daten der hinteren Fahrzeugbeleuchtung (Chip 2 und 3) reagieren.
+Dieses Modul liest das Signal deines neuen Empfängers aus, berechnet die Fahrphysik und übersetzt sie in Echtzeit für das Traxxas-Lichtset. Du musst nichts abrüsten oder neu verkabeln – das Modul klinkt sich einfach als Übersetzer dazwischen!
 
-## Die LED-Matrix (Hardware Mapping)
+## 🚀 Features
+* **Multi-Protokoll für 3rd-Party Empfänger:** Unterstützt SBUS, iBUS und klassisches PPM. Ideal für Micro-Empfänger.
+* **Smartphone Web-Interface:** Eigener WLAN-Access-Point zur einfachen Konfiguration direkt am Fahrzeug (Deutsch & Englisch). Kein PC auf dem Trail nötig!
+* **Perfekte Anpassung an die Funke:**
+  * **Volles Channel-Mapping:** Weise Funktionen wie Hauptlicht, Zusatzscheinwerfer und Blinker völlig frei beliebigen Empfängerkanälen zu.
+  * **Auto-Trim-Funktion:** Ein Klick im Web-Interface und das Modul speichert den mechanischen Lenk-Offset (Nullpunkt) deiner Funke.
+  * **Reverse-Schalter:** Die Laufrichtung jedes Kanals lässt sich direkt in der Software umkehren.
+* **Erweiterte Blinker- & Licht-Logik:**
+  * **Smart Auto-Cancel:** Blinker schaltet sich wie beim echten Auto ab, wenn du aus der Kurve lenkst.
+  * **Blinker-Styles:** Wähle das optische Design (Classic, Soft-Off (Mazda), Soft-On (BMW), Retro Glühlampe).
+  * **Regionale Licht-Profile (EU/US):** Verwandle die Optik deines Scalers mit einem Klick:
+    * *EU-Style:* Klassisch getrennte Blinker (gelb) und Bremslichter (rot).
+    * *US-Style Front:* Vordere Blinker glimmen dauerhaft gedimmt als orange Sidemarker (Standlicht) und pulsieren beim Blinken.
+    * *US-Style Komplett:* Front-Sidemarker kombiniert mit typisch amerikanischem Heck (das rote Bremslicht blinkt im Takt, die gelben Blinker bleiben deaktiviert).
+* **Adaptives Bremslicht (ESS):** Erkennt echte Vollbremsungen über den Gashebel und lässt das Bremslicht realistisch flackern. Danach schaltet sich automatisch der Warnblinker ein.
+* **ESC-Kompatibilität & Fahrlogik:** Drei wählbare Profile für die perfekte Erkennung von Bremse und Rückfahrlicht:
+  * *Standard:* Klassischer RC-Regler (Doppelklick für Rückwärts).
+  * *Crawler (FOC):* Drag-Brake Erkennung und direkter Übergang in den Rückwärtsgang.
+  * *Real-Car (Getriebe):* Manuelle Gangschaltung (Vorwärts / Rückwärts) über einen separaten AUX-Kanal für den ultimativen Scale-Realismus.
+* **Standby & Parklicht:** Dimmt die Scheinwerfer nach definierter Inaktivität automatisch ab, um Strom zu sparen und Hitzestau zu vermeiden. Generelle Master-Helligkeit im Web-UI einstellbar.
 
-Das gesamte System lässt sich im Code wie ein Strang aus **4 NeoPixel-Chips** (Index 0 bis 3) ansteuern. Die Helligkeit der Lampen kann über PWM-Werte (0 = Aus, 255 = Hell) stufenlos gedimmt werden.
+## 🛠 Hardware & Verkabelung
+Das Projekt läuft auf einem **Seeed Studio XIAO ESP32-C6** (oder ähnlichen, kompakten ESP32-Boards), da dieser klein genug ist, um problemlos in den TRX-4M zu passen.
+* **Eingang:** Der ESP32 wird per 3-Pin-Kabel mit dem Empfänger verbunden (Strom, GND, Signal-Pin für SBUS/iBUS/PPM).
+* **Ausgänge (2-Kanal System):** Die Ansteuerung der Traxxas-LEDs erfolgt über zwei getrennte Datenleitungen am ESP32.
+  * **Kanal 1 (Main):** Übernimmt die komplette Basis-Fahrzeugbeleuchtung (Scheinwerfer, Rücklichter, Blinker).
+  * **Kanal 2 (Aux):** Ist exklusiv für Zusatzscheinwerfer (z. B. Lightbars oder Roof-Lights) reserviert und lässt sich separat schalten.
 
-| Chip Index | Farb-Kanal im Code | Funktion am Fahrzeug | Funktion am Anhänger |
-| :--- | :--- | :--- | :--- |
-| **Chip 0** | Rot | Blinker vorne Links | - |
-| **Chip 0** | Grün | Tagfahrlicht Links | - |
-| **Chip 0** | Blau | Abblendlicht Links + Zusatzscheinwerfer* | - |
-| **Chip 1** | Rot | Blinker vorne Rechts | - |
-| **Chip 1** | Grün | Tagfahrlicht Rechts | - |
-| **Chip 1** | Blau | Abblendlicht Rechts | - |
-| **Chip 2** | Rot | Blinker hinten Rechts | Blinker Rechts (rot) |
-| **Chip 2** | Grün | Rückfahrlicht Rechts (weiß) | Rückfahrlicht Rechts |
-| **Chip 2** | Blau | Rücklicht / Bremslicht Rechts | Bremslicht Rechts |
-| **Chip 3** | Rot | Blinker hinten Links | Blinker Links (rot) |
-| **Chip 3** | Grün | Rückfahrlicht Links (weiß) | Rückfahrlicht Links |
-| **Chip 3** | Blau | Rücklicht / Bremslicht Links | Bremslicht Links |
+*(Detaillierte Pin-Belegung und Schaltpläne für den Anschluss des Traxxas-Kabelbaums findest du im Wiki / in den Code-Kommentaren).*
 
-*\*Hinweis zu den Zusatzscheinwerfern: Da diese über ein Y-Kabel fest mit dem blauen Kanal von Chip 0 gekoppelt sind, leuchten sie im Werkszustand immer synchron mit dem Abblendlicht auf.*
+## 💻 Installation (PlatformIO)
+1. Repository klonen: 
+    ``` bash
+    git clone https://github.com/DEIN_NAME/trx4m-light-controller.git
+    ```
+2. Ordner in **VS Code** (mit PlatformIO) öffnen.
+3. ESP32-C6 über USB-C anschließen.
+4. Auf "Upload" klicken – PlatformIO kompiliert den Code und flasht den Chip automatisch.
 
-## Modding-Potenzial: Unabhängige Steuerung
+## 📱 Konfiguration im Fahrzeug
+1. TRX-4M einschalten. Der ESP32 öffnet ein WLAN-Netzwerk (z.B. ProScale-Config).
+2. Smartphone verbinden und [http://192.168.4.1](http://192.168.4.1) im Browser öffnen.
+3. Kanäle zuweisen, Blinker-Verhalten wählen und ggf. die Lenkung über den "Auto-Trim"-Button exakt nullen.
+4. Speichern, Neustart abwarten – fertig für den Trail!
 
-Da das Traxxas ECM-2.5 die Stränge per Y-Kabel zusammenschließt, sind Anhänger und Lightbar im Originalzustand an die Hauptbeleuchtung gekoppelt. 
-
-Wenn man das System mit einem eigenen Mikrocontroller steuert, können die Y-Kabel entfernt und die Komponenten an **separate GPIO-Pins** des Mikrocontrollers (z. B. 3 getrennte NeoPixel-Instanzen in der Software) angeschlossen werden. 
-Dies ermöglicht völlig neue Funktionen, wie zum Beispiel:
-* Zusatzscheinwerfer (Dach/Grill) unabhängig vom Abblendlicht per Fernsteuerung schalten.
-* Anhängerbeleuchtung abweichend vom Zugfahrzeug steuern (z. B. Warnblinker nur am Anhänger).
-
-## Programmierung (Beispiel)
-
-Zur Ansteuerung kann jede handelsübliche Bibliothek für adressierbare LEDs genutzt werden (z. B. `Adafruit_NeoPixel` oder `FastLED`).
-
-Um das Bremslicht hinten links am Fahrzeug (und zeitgleich am Anhänger, falls per Y-Kabel verbunden) auf 100% Helligkeit einzuschalten, wird der "Blaue" Kanal von Chip 3 angesteuert:
-`strip.setPixelColor(3, 0, 0, 255)`
+## 📄 Lizenz
+Dieses Projekt ist unter der GNU General Public License v3.0 (GPLv3) lizenziert. Der Code ist Open Source. Details siehe LICENSE-Datei.
