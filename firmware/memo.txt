@@ -1,0 +1,27 @@
+--- Start (Alles ist aus) ---
+
+Klick 1: Chip 0 (Rot-Kanal) = Blinker vorne Links
+Klick 2: Chip 0 (Grün-Kanal) = Tagfahrlicht Links
+Klick 3: Chip 0 (Blau-Kanal) = Abblendlicht Links, Zusatzscheinwerfer Kühlergrill, Zusatzscheinwerfer Dach
+Klick 4: Chip 1 (Rot-Kanal) = Blinker vorne Rechts
+Klick 5: Chip 1 (Grün-Kanal) = Tagfahrlicht Rechts
+Klick 6: Chip 1 (Blau-Kanal) = Abblendlicht Rechts
+Klick 7: Chip 2 (Rot-Kanal) = Blinker hinten Rechts, Anhänger Blinker Rechts (rot)
+Klick 8: Chip 2 (Grün-Kanal) = Rückfahrlicht Rechts (weiß), Anhänger Rückfahrlicht Rechts
+Klick 9: Chip 2 (Blau-Kanal) = Rücklicht/Bremslicht Rechts, Anhänger Bremslicht Rechts
+Klick 10: Chip 3 (Rot-Kanal) = Blinker hinten Links, Anhänger Blinker Links (rot)
+Klick 11: Chip 3 (Grün-Kanal) = Rückfahrlicht Links, Anhänger Rückfahrlicht Links
+Klick 12: Chip 3 (Blau-Kanal) = Rücklicht/Bremslicht Links, Anhänger Bremslicht Links
+Klick 13: Chip 4 (Rot-Kanal) = ________________
+Klick 14: Chip 4 (Grün-Kanal) = ________________
+Klick 15: Chip 4 (Blau-Kanal) = ________________
+Klick 16: (Alles geht wieder aus. Bei Klick 17 fängt es wieder oben an).
+
+channel 1	steering
+channel	2	throttle
+channel 3	Abblendlich
+channel 4	Zusatzlicht
+channel 5	Blinker (L/R)
+channel 6	Blinker Warnlicht
+channel 7	ESC Gangwahl
+channel 8

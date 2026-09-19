@@ -1,0 +1,18 @@
+# Firmware / Platformio
+firmware/.pio
+firmware/.cache
+firmware/.dummy
+firmware/.vscode/
+firmware/compile_commands.json
+
+# Hardware / KiCad-generated files and directories.
+hardware/**/.history/
+hardware/**/*-backups/
+hardware/**/_autosave-*
+hardware/**/fp-info-cache
+hardware/**/~*.lck
+hardware/**/*.kicad_prl
+
+# Generel
+.DS_Store
+Thumbs.db
