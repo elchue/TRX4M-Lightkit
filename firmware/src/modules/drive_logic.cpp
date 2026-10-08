@@ -15,7 +15,7 @@ static bool lock_reverse = false;
 void updateDriveLogic(int valThrottle, int valSteering, int valGear) {
   
   // 1. AKTIVITÄTS-CHECK (Für das Parklicht)
-  if (valThrottle > 1550 || valThrottle < 1450 || valSteering > 1550 || valSteering < 1450) {
+  if (valThrottle > 1550 || valThrottle < 1450) {
     letzteBewegung = millis(); 
     car_is_parked = false;
   }
