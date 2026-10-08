@@ -238,8 +238,8 @@ void updateLEDs(int valThrottle, int valSteering, int valLight, int valAux, int 
   bool park_left_active = true;
   bool park_right_active = true;
   if (car_is_parked) {
-    if (valBlinkerMan < 1200) park_right_active = false;
-    if (valBlinkerMan > 1800) park_left_active = false;
+    if (blink_left_active)  park_right_active = false;
+    if (blink_right_active) park_left_active = false;
   }
 
   // --- ZIELWERTE FRONT ---
