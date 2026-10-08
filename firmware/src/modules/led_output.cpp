@@ -196,6 +196,21 @@ void updateLEDs(int valThrottle, int valSteering, int valLight, int valAux, int 
     blink_right_active = (blink_state == 3 || blink_state == 4);
   }
 
+  // Smart Side-Parking (Einseitiges Parklicht)
+  bool park_left_active = true;
+  bool park_right_active = true;
+  if (car_is_parked) {
+    if (blink_left_active) {
+      park_right_active = false;
+      blink_left_active = false;
+    }
+    if (blink_right_active) {
+      park_left_active = false;
+      blink_right_active = false;
+    }
+  }
+  
+  // Hazard Blinkers
   if ((cfg.ch_hazard > 0 && valHazard > 1500) || ess_hazard_active) {
     blink_left_active = true;
     blink_right_active = true;
@@ -233,14 +248,6 @@ void updateLEDs(int valThrottle, int valSteering, int valLight, int valAux, int 
   uint8_t target_rear_b_left = 0;
   uint8_t target_rear_b_right = 0;
   uint8_t target_aux_b = aux_on ? BRIGHT_MAX : 0;
-
-  // Smart Side-Parking (Einseitiges Parklicht)
-  bool park_left_active = true;
-  bool park_right_active = true;
-  if (car_is_parked) {
-    if (blink_left_active)  park_right_active = false;
-    if (blink_right_active) park_left_active = false;
-  }
 
   // --- ZIELWERTE FRONT ---
   if (car_is_parked && tfl_on) {

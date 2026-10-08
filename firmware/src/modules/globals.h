@@ -3,7 +3,7 @@
 #include <Adafruit_NeoPixel.h>
 #include <math.h>
 
-#define FIRMWARE_VERSION "v1.0.0"
+#define FIRMWARE_VERSION "v1.0.3"
 #define WIFI_SSID "TRX4M-ProScale"
 #define WIFI_PASS ""
 
